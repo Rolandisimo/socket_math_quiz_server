@@ -1,6 +1,8 @@
 const io = require('socket.io')();
 const quizes = require('./static/quizes');
 
+
+const CONNECTION = "connection";
 /**
  * When a player joins
  */
@@ -56,7 +58,7 @@ function changeQuiz() {
 }
 
 
-io.on('connection', (socket) => {
+io.on(CONNECTION, (socket) => {
   socket.emit(QUIZ_START, currentQuiz[0]);
 
   socket.on(SUBSCRIBE_PLAYER, (data) => {
@@ -109,6 +111,11 @@ io.on('connection', (socket) => {
       io.emit(ROUND_WINNER, roundWinner)
     }
   });
+
+  /**
+   * TODO:
+   * Kick inactive players out of the game
+   */
 });
 
 /**
