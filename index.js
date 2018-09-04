@@ -1,7 +1,27 @@
-const io = require('socket.io')();
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 const quizes = require('./static/quizes');
 
+/**
+ * =========================
+ *                   LISTEN
+ * =========================
+ */
+// Also listens to this on the client
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log("LISTENING ON PORT:" + PORT);
+});
 
+// app.use(express.static(__dirname + "./build"))
+
+/**
+ * =========================
+ *                CONSTS
+ * =========================
+ */
 const CONNECTION = "connection";
 /**
  * When a player joins
@@ -25,8 +45,11 @@ const QUIZ_END = "QUIZ_END";
 
 const ROUND_WINNER = "ROUND_WINNER";
 
+
 /**
- * Initial state
+ * =========================
+ *           INITIAL STATE
+ * =========================
  */
 const players = {};
 let playerScore = 0;
@@ -39,8 +62,12 @@ const currentQuiz = [quizes[quizIndex]];
  * Reset at round start
  */
 let roundWinner;
+
+
 /**
- * Handle quiz chanign
+ * =========================
+ *       HANDLE QUIZ CHANGE
+ * =========================
  */
 function changeQuiz() {
     // Remove item from the stack
@@ -58,6 +85,11 @@ function changeQuiz() {
 }
 
 
+/**
+ * =========================
+ *      SOCKET CONNECTIONS
+ * =========================
+ */
 io.on(CONNECTION, (socket) => {
   socket.emit(QUIZ_START, currentQuiz[0]);
 
@@ -126,8 +158,11 @@ setInterval(() => {
 }, 100);
 
 
+
 /**
- * Handle  Game phases
+ * =========================
+ *              GAME PHASES
+ * =========================
  */
 const NEXT_GAME_TIMEOUT = 5000;
 const END_GAME_TIMEOUT = 10000;
@@ -149,8 +184,3 @@ setInterval(() => {
 }, FULL_GAME_TIMEOUT)
 
 
-// Start listening to port
-// Also listens to this on the client
-const port = 8000;
-io.listen(port);
-console.log('Client listening on port ' + port);
