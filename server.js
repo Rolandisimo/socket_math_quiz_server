@@ -21,6 +21,8 @@ const CHANGE_SCORE = "changeScore";
 const QUIZ_START = "QUIZ_START";
 const QUIZ_END = "QUIZ_END";
 
+const ROUND_WINNER = "ROUND_WINNER";
+
 /**
  * Initial state
  */
@@ -28,6 +30,13 @@ const players = {};
 let playerScore = 0;
 let quizIndex = 0;
 const currentQuiz = [quizes[quizIndex]];
+/**
+ * If set, then send out message to all sockets that
+ * a winner has been set.
+ *
+ * Reset at round start
+ */
+let roundWinner;
 /**
  * Handle quiz chanign
  */
@@ -86,6 +95,20 @@ io.on('connection', (socket) => {
   socket.on(CHANGE_SCORE, (id, score) => {
     players[id].score = score
   });
+
+  socket.on(ROUND_WINNER, (id) => {
+    /**
+     * If round has no winner yet,
+     * we emit a winner to prevent
+     * from adding positive score
+     * to the next players that
+     * answer correctly in a single round
+     */
+    if (!roundWinner) {
+      roundWinner = players[id];
+      io.emit(ROUND_WINNER, roundWinner)
+    }
+  });
 });
 
 /**
@@ -106,6 +129,7 @@ const ROUND_START = "ROUND_START";
 const ROUND_END = "ROUND_END";
 
 setInterval(() => {
+  roundWinner = undefined;
   io.emit(ROUND_START);
 
   setTimeout(() => {
