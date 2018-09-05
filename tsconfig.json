@@ -1,0 +1,23 @@
+{
+  "include": [
+    "src/**/*.ts",
+    "static/**/*.ts"
+  ],
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+        "*": [
+            "node_modules/*",
+            "src/types/*"
+        ]
+    },
+    "strict": true
+  }
+}

@@ -1,49 +1,20 @@
-const express = require('express');
-const app = express();
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
-const quizes = require('./static/quizes');
-
-/**
- * =========================
- *  LISTEN
- * =========================
- */
-// Also listens to this on the client
-const PORT = process.env.PORT || 8000;
-server.listen(PORT, () => {
-  console.log("LISTENING ON PORT:" + PORT);
-});
-
-// app.use(express.static(__dirname + "./build"))
-
-/**
- * =========================
- *  CONSTS
- * =========================
- */
-const CONNECTION = "connection";
-/**
- * When a player joins
- */
-const SUBSCRIBE_PLAYER = "subscribePlayer";
-const DISCONNECT = "disconnect";
-/**
- * Current players, etc
- */
-const SERVER_STATE = "state";
-
-/**
- * Alter player score
- */
-const CHANGE_SCORE = "changeScore";
-/**
- * Start quiz
- */
-const QUIZ_START = "QUIZ_START";
-const QUIZ_END = "QUIZ_END";
-
-const ROUND_WINNER = "ROUND_WINNER";
+import { io } from "./server";
+import { quizes } from '../static/quizes';
+import { PlayerType } from "./types";
+import {
+  CHANGE_SCORE,
+  CONNECTION,
+  DISCONNECT,
+  END_GAME_TIMEOUT,
+  FULL_GAME_TIMEOUT,
+  NEXT_GAME_TIMEOUT,
+  QUIZ_START,
+  ROUND_END,
+  ROUND_START,
+  ROUND_WINNER,
+  SERVER_STATE,
+  SUBSCRIBE_PLAYER,
+} from "./consts";
 
 
 /**
@@ -51,7 +22,7 @@ const ROUND_WINNER = "ROUND_WINNER";
  *  INITIAL STATE
  * =========================
  */
-const players = {};
+const players: {[key: string]: PlayerType} = {};
 let playerScore = 0;
 let quizIndex = 0;
 const currentQuiz = [quizes[quizIndex]];
@@ -61,7 +32,7 @@ const currentQuiz = [quizes[quizIndex]];
  *
  * Reset at round start
  */
-let roundWinner;
+let roundWinner: PlayerType | undefined;
 
 
 /**
@@ -90,7 +61,7 @@ function changeQuiz() {
  *  SOCKET CONNECTIONS
  * =========================
  */
-io.on(CONNECTION, (socket) => {
+function socketConnection(socket: SocketIO.Socket) {
   /**
    * Notify a late joiner if there's a winner
    * to avoid incorrect state change
@@ -159,28 +130,14 @@ io.on(CONNECTION, (socket) => {
    * TODO:
    * Kick inactive players out of the game
    */
-});
+}
 
-/**
- * Notify client about server state
- */
+/* Notify client about server state */
 setInterval(() => {
   io.sockets.emit(SERVER_STATE, players);
 }, 100);
 
-
-
-/**
- * =========================
- *  GAME PHASES
- * =========================
- */
-const NEXT_GAME_TIMEOUT = 5000;
-const END_GAME_TIMEOUT = 10000;
-const FULL_GAME_TIMEOUT = END_GAME_TIMEOUT + NEXT_GAME_TIMEOUT;
-const ROUND_START = "ROUND_START";
-const ROUND_END = "ROUND_END";
-
+// Game phases handling
 setInterval(() => {
   roundWinner = undefined;
   io.emit(ROUND_START);
@@ -194,4 +151,5 @@ setInterval(() => {
   }, END_GAME_TIMEOUT)
 }, FULL_GAME_TIMEOUT)
 
-
+// Establish connection listener
+io.on(CONNECTION,  socketConnection);

@@ -1,4 +1,4 @@
-module.exports = [
+export const quizes = [
     {
         "question": "2 + 3 = 5",
         "answer": true
