@@ -6,7 +6,7 @@ const quizes = require('./static/quizes');
 
 /**
  * =========================
- *                   LISTEN
+ *  LISTEN
  * =========================
  */
 // Also listens to this on the client
@@ -19,7 +19,7 @@ server.listen(PORT, () => {
 
 /**
  * =========================
- *                CONSTS
+ *  CONSTS
  * =========================
  */
 const CONNECTION = "connection";
@@ -48,7 +48,7 @@ const ROUND_WINNER = "ROUND_WINNER";
 
 /**
  * =========================
- *           INITIAL STATE
+ *  INITIAL STATE
  * =========================
  */
 const players = {};
@@ -66,7 +66,7 @@ let roundWinner;
 
 /**
  * =========================
- *       HANDLE QUIZ CHANGE
+ *  HANDLE QUIZ CHANGE
  * =========================
  */
 function changeQuiz() {
@@ -87,10 +87,17 @@ function changeQuiz() {
 
 /**
  * =========================
- *      SOCKET CONNECTIONS
+ *  SOCKET CONNECTIONS
  * =========================
  */
 io.on(CONNECTION, (socket) => {
+  /**
+   * Notify a late joiner if there's a winner
+   * to avoid incorrect state change
+   */
+  if (roundWinner) {
+    io.emit(ROUND_WINNER, roundWinner.id)
+  }
   socket.emit(QUIZ_START, currentQuiz[0]);
 
   socket.on(SUBSCRIBE_PLAYER, (data) => {
@@ -111,6 +118,10 @@ io.on(CONNECTION, (socket) => {
     }
   });
 
+  /**
+   * Subscribe user which is being catched on the client
+   * to allow to set the screenname
+   */
   socket.emit(SUBSCRIBE_PLAYER, { id: socket.id, name: "",  score: playerScore, isPlaying: false });
 
   /**
@@ -161,7 +172,7 @@ setInterval(() => {
 
 /**
  * =========================
- *              GAME PHASES
+ *  GAME PHASES
  * =========================
  */
 const NEXT_GAME_TIMEOUT = 5000;
