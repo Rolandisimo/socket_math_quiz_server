@@ -1,5 +1,5 @@
 import { io } from "./server";
-import { quizes } from '../static/quizes';
+import { quizes } from './static/quizes';
 import { PlayerType, Quiz } from "./types";
 import {
   CHANGE_SCORE,

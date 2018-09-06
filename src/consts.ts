@@ -3,7 +3,7 @@
  *  CONSTS
  * =========================
  */
-export const PORT = process.env.PORT || 8000;
+export const PORT = process.env.PORT || 5000;
 export const CONNECTION = "connection";
 /**
  * When a player joins
