@@ -1,6 +1,7 @@
 import express from 'express';
 import http from 'http';
 import socketIO from 'socket.io';
+import path from 'path';
 import { PORT } from "./consts";
 
 export const app = express();
@@ -17,8 +18,13 @@ server.listen(PORT, () => {
   console.log("LISTENING ON PORT:" + PORT);
 });
 
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
-});
+// app.get('/', function (req, res) {
+//   res.send(__dirname + '/index.html');
+// });
 
-app.use(express.static(__dirname));
+// app.use(express.static(__dirname));
+
+app
+  .use(express.static(path.join(__dirname)))
+  .get('/', (req, res) => res.render('/index.html'));
+
