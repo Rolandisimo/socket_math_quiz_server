@@ -17,4 +17,7 @@ server.listen(PORT, () => {
   console.log("LISTENING ON PORT:" + PORT);
 });
 
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
+});
 app.use(express.static(__dirname + "./dist"));
