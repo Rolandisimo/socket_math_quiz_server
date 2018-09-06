@@ -1,6 +1,6 @@
 import { io } from "./server";
 import { quizes } from '../static/quizes';
-import { PlayerType } from "./types";
+import { PlayerType, Quiz } from "./types";
 import {
   CHANGE_SCORE,
   CONNECTION,
@@ -22,10 +22,11 @@ import {
  *  INITIAL STATE
  * =========================
  */
+
 const players: {[key: string]: PlayerType} = {};
 let playerScore = 0;
 let quizIndex = 0;
-const currentQuiz = [quizes[quizIndex]];
+const currentQuiz: Quiz[] = [quizes[quizIndex]];
 /**
  * If set, then send out message to all sockets that
  * a winner has been set.

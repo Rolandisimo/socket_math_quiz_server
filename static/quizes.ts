@@ -1,4 +1,6 @@
-export const quizes = [
+import { Quiz } from "../src/types";
+
+export const quizes: Quiz[] = [
     {
         "question": "2 + 3 = 5",
         "answer": true

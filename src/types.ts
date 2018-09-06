@@ -4,3 +4,7 @@ export interface PlayerType {
     score: number;
     isPlaying: boolean;
 }
+export interface Quiz {
+    question: string;
+    answer: boolean;
+  }
